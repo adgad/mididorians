@@ -1,0 +1,47 @@
+body {
+	background: black;
+}
+
+.target {
+	width: 70px;
+	text-align: center;
+	color: white;
+	border: 2px solid white;
+	font-family: monospace;
+	border-style: dashed;
+	border-radius: 100px;
+	height: 70px;
+	display: grid;
+	justify-content: center;
+	align-content: center;
+}
+
+.target__root {
+	font-size: 24px;
+}
+
+.target__quality {
+	font-size: 16px;
+}
+
+.piano {
+	display: flex;
+}
+.piano__note {
+    height: 120px;
+    background: white;
+    width: 40px;
+    border: 1px solid #666;
+	}
+
+.piano__note[data-note*="#"] {
+    height: 80px;
+    background: black;
+    left: -20px;
+    position: relative;
+    margin-right: -43px;
+	}
+
+	.piano__note.pressed {
+		background: cyan;
+	}

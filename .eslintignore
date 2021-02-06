@@ -1,0 +1,5 @@
+public/
+lib/
+dist/
+codecept.conf.js
+scripts/*/node_modules
