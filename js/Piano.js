@@ -1,28 +1,44 @@
 import { Midi } from '@tonaljs/tonal';
+import * as Tone from 'tone';
 
 export default class Piano {
 	constructor() {
-		this.piano = document.querySelector('.piano');
+		this.display = document.querySelector('.piano');
+	}
+
+	start() {
+		const reverb = new Tone.Reverb().toDestination();
+		const filter = new Tone.Filter(500, 'highpass').toDestination();
+		this.synth = new Tone.PolySynth().connect(filter).connect(reverb);
+		Tone.start();
 	}
 
 	noteOn(note) {
 		const noteName = Midi.midiToNoteName(note, {
+			sharps: true,
+		});
+		const noteClass = Midi.midiToNoteName(note, {
 			pitchClass: true,
 			sharps: true,
 		});
-		this.piano
-			.querySelector(`[data-note="${noteName}"]`)
+		console.log({ noteName });
+		this.synth.triggerAttack(noteName, Tone.now());
+		this.display
+			.querySelector(`[data-note="${noteClass}"]`)
 			.classList.add('pressed');
 	}
 
 	noteOff(note) {
-		console.log('noteOff', note);
 		const noteName = Midi.midiToNoteName(note, {
+			sharps: true,
+		});
+		const noteClass = Midi.midiToNoteName(note, {
 			pitchClass: true,
 			sharps: true,
 		});
-		this.piano
-			.querySelector(`[data-note="${noteName}"]`)
+		this.synth.triggerRelease(noteName, Tone.now());
+		this.display
+			.querySelector(`[data-note="${noteClass}"]`)
 			.classList.remove('pressed');
 	}
 }

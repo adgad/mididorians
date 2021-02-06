@@ -1,5 +1,78 @@
-body {
+
+html, body {
 	background: black;
+	height: 100%;
+	font-family: "Helvetica Neue", Arial;
+	margin: 0;
+	overflow: hidden;
+}
+
+.game {
+	display: none;
+}
+
+.started .game {
+	display: grid;
+}
+
+.started .intro {
+	display: none;
+}
+
+.intro {
+	display: grid;
+	height: 100%;
+	align-items: center;
+	justify-items: center;
+}
+
+.game {
+	height: 100%;
+}
+
+.start-game {
+	border: 1px solid aqua;
+	font-size: 30px;
+	padding: 10px;
+	background: transparent;
+	color: aqua;
+	cursor: pointer;
+	font-weight: 100;
+	font-family: "Helvetica Neue", Arial;
+	transition: background-color 0.2s ease-in-out;
+}
+
+.start-game:hover {
+	background-color: aqua;
+	color: black;
+}
+
+.score {
+	justify-content: center;
+	font-size: 30px;
+	color: yellow;
+	display: flex;
+	top: 10px;
+	position: absolute;
+	right: 10px;
+	padding: 10px;
+	height: 40px;
+	width: 40px;
+	border-radius: 100px;
+	border: 1px solid currentColor;
+}
+
+.currentChord {
+	color: cyan;
+	font-weight: 100;
+	font-size: 30px;
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+}
+
+.targets {
+	position: absolute;
 }
 
 .target {
@@ -14,6 +87,7 @@ body {
 	display: grid;
 	justify-content: center;
 	align-content: center;
+	position: absolute;
 }
 
 .target__root {
@@ -26,6 +100,8 @@ body {
 
 .piano {
 	display: flex;
+	align-self: end;
+	justify-self: end;
 }
 .piano__note {
     height: 120px;
