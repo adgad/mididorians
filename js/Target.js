@@ -1,19 +1,22 @@
-const NOTES = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
 import { Note, Key, ChordType } from '@tonaljs/tonal';
 
-console.log(ChordType.all());
+const complexityFilter = {
+	simple: (c) => ['Major', 'Minor'].includes(c.quality) && c.name,
+	intermediate: (c) => c.name,
+	hard: (c) => c,
+};
+
 const getChordTarget = ({
-	length = 3,
-	qualities = ['Major', 'Minor'],
+	chordLength = 3,
+	chordComplexity = 'simple',
+	chordRoots = ['C'],
 } = {}) => {
-	const randomNote = NOTES[Math.floor(Math.random() * NOTES.length)];
+	const randomNote = chordRoots[Math.floor(Math.random() * chordRoots.length)];
 	const validChordTypes = ChordType.all()
-		.filter(
-			(c) =>
-				c.intervals.length === length && qualities.includes(c.quality) && c.name
-		)
+		.filter(complexityFilter[chordComplexity])
+		.filter((c) => c.intervals.length <= parseInt(chordLength))
 		.map((c) => c.aliases[0]);
-	console.log({ validChordTypes });
+
 	const randomType =
 		validChordTypes[Math.floor(Math.random() * validChordTypes.length)];
 	return {
@@ -27,16 +30,15 @@ export default class Target {
 
 	static targetsEl = document.querySelector('.targets');
 
-	static create() {
-		const { root, quality } = getChordTarget();
+	static create(settings) {
+		const { root, quality } = getChordTarget(settings);
 
 		const existing = Target.all.get(root + quality);
 		if (existing) {
-			console.log(`${root + quality} already exists!`);
 			return;
 		}
 
-		const newTarget = new Target(root, quality);
+		const newTarget = new Target(root, quality, settings.speed);
 		Target.all.set(newTarget.target, newTarget);
 		return newTarget;
 	}
@@ -52,14 +54,16 @@ export default class Target {
 
 	static clear() {
 		for (let target of Target.all.values()) {
+			target.animation.cancel();
 			target.remove();
 		}
 	}
 
-	constructor(root, quality, onFall) {
+	constructor(root, quality, speed, onFall) {
 		this.root = root;
 		this.quality = quality;
 		this.target = root + quality;
+		this.speed = speed;
 		this.render();
 		this.invaded = this.animation.finished;
 	}
@@ -79,7 +83,7 @@ export default class Target {
 		targetEl.classList.add('target');
 		targetEl.style.left =
 			Math.floor(
-				Math.random() * (document.body.offsetWidth - targetEl.clientWidth)
+				Math.random() * (document.body.offsetWidth - targetEl.clientWidth - 50)
 			) + 'px';
 		Target.targetsEl.appendChild(targetEl);
 		this.animation = targetEl.animate(
@@ -91,7 +95,7 @@ export default class Target {
 			],
 			{
 				// timing options
-				duration: 10000,
+				duration: parseInt(this.speed),
 				fill: 'forwards',
 			}
 		);

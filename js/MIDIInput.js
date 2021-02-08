@@ -22,16 +22,22 @@ export default class MIDIInput {
 
 	async init() {
 		if (navigator.requestMIDIAccess) {
-			const midiAccess = await navigator.requestMIDIAccess();
-			const inputs = midiAccess.inputs;
+			try {
+				const midiAccess = await navigator.requestMIDIAccess();
+				const inputs = midiAccess.inputs;
 
-			for (const input of inputs.values()) {
-				input.onmidimessage = this.onMIDIMessage.bind(this);
-				console.log('All set up!');
+				if (!inputs || !inputs.size) {
+					this.onError('This game requires a MIDI device to play');
+				}
+
+				for (const input of inputs.values()) {
+					input.onmidimessage = this.onMIDIMessage.bind(this);
+				}
+			} catch (err) {
+				this.onError(err.message);
 			}
 		} else {
 			this.onError('WebMIDI is not supported in this browser');
-			console.log('WebMIDI is not supported in this browser.');
 		}
 	}
 

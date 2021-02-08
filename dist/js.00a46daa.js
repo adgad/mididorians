@@ -4302,16 +4302,22 @@ class MIDIInput {
 
   async init() {
     if (navigator.requestMIDIAccess) {
-      const midiAccess = await navigator.requestMIDIAccess();
-      const inputs = midiAccess.inputs;
+      try {
+        const midiAccess = await navigator.requestMIDIAccess();
+        const inputs = midiAccess.inputs;
 
-      for (const input of inputs.values()) {
-        input.onmidimessage = this.onMIDIMessage.bind(this);
-        console.log('All set up!');
+        if (!inputs || !inputs.size) {
+          this.onError('This game requires a MIDI device to play');
+        }
+
+        for (const input of inputs.values()) {
+          input.onmidimessage = this.onMIDIMessage.bind(this);
+        }
+      } catch (err) {
+        this.onError(err.message);
       }
     } else {
       this.onError('WebMIDI is not supported in this browser');
-      console.log('WebMIDI is not supported in this browser.');
     }
   }
 
@@ -55706,9 +55712,6 @@ class Piano {
       sharps: true
     });
 
-    console.log({
-      noteName
-    });
     this.synth.triggerAttack(noteName, Tone.now());
     this.display.querySelector("[data-note=\"".concat(noteClass, "\"]")).classList.add('pressed');
   }
@@ -55742,21 +55745,22 @@ var _tonal = require("@tonaljs/tonal");
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-const NOTES = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
-console.log(_tonal.ChordType.all());
+const complexityFilter = {
+  simple: c => ['Major', 'Minor'].includes(c.quality) && c.name,
+  intermediate: c => c.name,
+  hard: c => c
+};
 
 const getChordTarget = function getChordTarget() {
   let {
-    length = 3,
-    qualities = ['Major', 'Minor']
+    chordLength = 3,
+    chordComplexity = 'simple',
+    chordRoots = ['C']
   } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  const randomNote = NOTES[Math.floor(Math.random() * NOTES.length)];
+  const randomNote = chordRoots[Math.floor(Math.random() * chordRoots.length)];
 
-  const validChordTypes = _tonal.ChordType.all().filter(c => c.intervals.length === length && qualities.includes(c.quality) && c.name).map(c => c.aliases[0]);
+  const validChordTypes = _tonal.ChordType.all().filter(complexityFilter[chordComplexity]).filter(c => c.intervals.length <= parseInt(chordLength)).map(c => c.aliases[0]);
 
-  console.log({
-    validChordTypes
-  });
   const randomType = validChordTypes[Math.floor(Math.random() * validChordTypes.length)];
   return {
     root: randomNote,
@@ -55765,19 +55769,18 @@ const getChordTarget = function getChordTarget() {
 };
 
 class Target {
-  static create() {
+  static create(settings) {
     const {
       root,
       quality
-    } = getChordTarget();
+    } = getChordTarget(settings);
     const existing = Target.all.get(root + quality);
 
     if (existing) {
-      console.log("".concat(root + quality, " already exists!"));
       return;
     }
 
-    const newTarget = new Target(root, quality);
+    const newTarget = new Target(root, quality, settings.speed);
     Target.all.set(newTarget.target, newTarget);
     return newTarget;
   }
@@ -55794,14 +55797,16 @@ class Target {
 
   static clear() {
     for (let target of Target.all.values()) {
+      target.animation.cancel();
       target.remove();
     }
   }
 
-  constructor(root, quality, onFall) {
+  constructor(root, quality, speed, onFall) {
     this.root = root;
     this.quality = quality;
     this.target = root + quality;
+    this.speed = speed;
     this.render();
     this.invaded = this.animation.finished;
   }
@@ -55821,7 +55826,7 @@ class Target {
     }
 
     targetEl.classList.add('target');
-    targetEl.style.left = Math.floor(Math.random() * (document.body.offsetWidth - targetEl.clientWidth)) + 'px';
+    targetEl.style.left = Math.floor(Math.random() * (document.body.offsetWidth - targetEl.clientWidth - 50)) + 'px';
     Target.targetsEl.appendChild(targetEl);
     this.animation = targetEl.animate([{
       transform: 'translateY(0)'
@@ -55829,7 +55834,7 @@ class Target {
       transform: "translateY(calc(100vh - ".concat(targetEl.clientHeight + 2, "px)")
     }], {
       // timing options
-      duration: 10000,
+      duration: parseInt(this.speed),
       fill: 'forwards'
     });
     this.el = targetEl;
@@ -55861,13 +55866,15 @@ class Game {
     this.input = new _MIDIInput.default({
       onChange: this.onChange.bind(this),
       onNoteOn: this.piano.noteOn.bind(this.piano),
-      onNoteOff: this.piano.noteOff.bind(this.piano)
+      onNoteOff: this.piano.noteOff.bind(this.piano),
+      onError: this.onError.bind(this)
     });
     this.els = {
       currentChord: document.querySelector('.currentChord'),
       targets: document.querySelector('.targets'),
       startButton: document.querySelector('.start-game'),
-      score: document.querySelector('.score')
+      score: document.querySelector('.score'),
+      error: document.querySelector('.error')
     };
     this.els.startButton.addEventListener('click', this.start.bind(this));
     this.gameLoop = null;
@@ -55875,25 +55882,28 @@ class Game {
 
   start() {
     document.body.classList.add('started');
+    this.settings = {
+      chordLength: document.querySelector('#chord-length').value,
+      chordComplexity: document.querySelector('#chord-complexity').value,
+      speed: document.querySelector('#chord-pace').value,
+      chordRoots: [...document.querySelector('#chord-roots').selectedOptions].map(o => o.value)
+    };
+    console.log(this.settings);
     this.resetScore();
     this.piano.start();
     this.createTarget();
     this.gameLoop = setInterval(() => {
       this.createTarget();
-    }, 5000);
+    }, this.settings.speed / 2);
   }
 
   async createTarget() {
     try {
-      const target = _Target.default.create();
+      const target = _Target.default.create(this.settings);
 
       await target.invaded;
-      console.log('target has invaded', target.target);
       this.gameOver();
-      console.log('Game Over!');
-    } catch (err) {
-      console.log('no biggie error');
-    }
+    } catch (err) {}
   }
 
   gameOver() {
@@ -55901,7 +55911,8 @@ class Game {
 
     _Target.default.clear();
 
-    this.score = 0;
+    this.els.error.textContent = 'Game Over! You s-chord ' + this.score;
+    this.resetScore();
     clearInterval(this.gameLoop);
   }
 
@@ -55915,15 +55926,16 @@ class Game {
     this.els.score.textContent = this.score;
   }
 
+  onError(error) {
+    this.els.startButton.setAttribute('disabled', 'disabled');
+    this.els.error.textContent = error;
+  }
+
   async onChange(_ref) {
     let {
       notes,
       chords
     } = _ref;
-    console.log({
-      notes,
-      chords
-    });
     this.els.currentChord.textContent = (chords[0] || '').replace(/(.*)M$/, '$1');
 
     const hit = _Target.default.shoot(chords[0]);
@@ -55964,7 +55976,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51232" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57932" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

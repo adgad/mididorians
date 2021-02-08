@@ -21,7 +21,6 @@ export default class Piano {
 			pitchClass: true,
 			sharps: true,
 		});
-		console.log({ noteName });
 		this.synth.triggerAttack(noteName, Tone.now());
 		this.display
 			.querySelector(`[data-note="${noteClass}"]`)
