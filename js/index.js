@@ -5,13 +5,6 @@ import { Note, Key, ChordType } from '@tonaljs/tonal';
 
 class Game {
 	constructor() {
-		this.piano = new Piano();
-		this.input = new MIDIInput({
-			onChange: this.onChange.bind(this),
-			onNoteOn: this.piano.noteOn.bind(this.piano),
-			onNoteOff: this.piano.noteOff.bind(this.piano),
-			onError: this.onError.bind(this),
-		});
 		this.els = {
 			currentChord: document.querySelector('.currentChord'),
 			targets: document.querySelector('.targets'),
@@ -20,6 +13,13 @@ class Game {
 			error: document.querySelector('.error'),
 		};
 
+		this.piano = new Piano();
+		this.input = new MIDIInput({
+			onChange: this.onChange.bind(this),
+			onNoteOn: this.piano.noteOn.bind(this.piano),
+			onNoteOff: this.piano.noteOff.bind(this.piano),
+			onError: this.onError.bind(this),
+		});
 		this.els.startButton.addEventListener('click', this.start.bind(this));
 		this.gameLoop = null;
 	}

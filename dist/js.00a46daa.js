@@ -55862,13 +55862,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 class Game {
   constructor() {
-    this.piano = new _Piano.default();
-    this.input = new _MIDIInput.default({
-      onChange: this.onChange.bind(this),
-      onNoteOn: this.piano.noteOn.bind(this.piano),
-      onNoteOff: this.piano.noteOff.bind(this.piano),
-      onError: this.onError.bind(this)
-    });
     this.els = {
       currentChord: document.querySelector('.currentChord'),
       targets: document.querySelector('.targets'),
@@ -55876,6 +55869,13 @@ class Game {
       score: document.querySelector('.score'),
       error: document.querySelector('.error')
     };
+    this.piano = new _Piano.default();
+    this.input = new _MIDIInput.default({
+      onChange: this.onChange.bind(this),
+      onNoteOn: this.piano.noteOn.bind(this.piano),
+      onNoteOff: this.piano.noteOff.bind(this.piano),
+      onError: this.onError.bind(this)
+    });
     this.els.startButton.addEventListener('click', this.start.bind(this));
     this.gameLoop = null;
   }
@@ -55888,7 +55888,6 @@ class Game {
       speed: document.querySelector('#chord-pace').value,
       chordRoots: [...document.querySelector('#chord-roots').selectedOptions].map(o => o.value)
     };
-    console.log(this.settings);
     this.resetScore();
     this.piano.start();
     this.createTarget();
@@ -55976,7 +55975,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57932" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54256" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

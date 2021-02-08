@@ -1,1 +1,87 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><title>MidiDorians</title><meta name="description" content="MidiDorians"><meta name="author" content="adgad"><link rel="stylesheet" href="/styles.b1f53f16.css?v=1.0"></head><body> <section class="intro"> <div class="contents"> <h1 class="title">MidiDorians</h1> <p class="info">Play the chords on your keyboard before they fall to the ground</p> <p class="error"></p> <form> <label for="chord-roots">Chord Roots</label> <select name="chord-roots" id="chord-roots" multiple size="2"> <option value="C">C</option> <option value="C#">C#</option> <option value="D">D</option> <option value="D#">D#</option> <option value="E">E</option> <option value="F">F</option> <option value="F#">F#</option> <option value="G">G</option> <option value="G#">G#</option> <option value="A">A</option> <option value="A#">A#</option> <option value="B">B</option> </select> <label for="chord-complexity">Chord Length</label> <select name="chord-length" id="chord-length"> <option value="3">3</option> <option value="4">4</option> <option value="5">5</option> </select> <label for="chord-complexity">Chord Complexity</label> <select name="chord-complexity" id="chord-complexity"> <option value="simple">Simple</option> <option value="intermediate">Intermediate</option> <option value="hard">Hard</option> </select> <label for="chord-pace">Speed</label> <select name="chord-pace" id="chord-pace"> <option value="13700">Slow</option> <option value="9000">Medium</option> <option value="5000">Fast</option> </select> </form> <button class="start-game">Start</button> </div> </section> <section class="game"> <div class="targets"></div> <div class="score"></div> <div class="currentChord"></div> <div class="piano"> <div class="piano__note" data-note="C"></div> <div class="piano__note" data-note="C#"></div> <div class="piano__note" data-note="D"></div> <div class="piano__note" data-note="D#"></div> <div class="piano__note" data-note="E"></div> <div class="piano__note" data-note="F"></div> <div class="piano__note" data-note="F#"></div> <div class="piano__note" data-note="G"></div> <div class="piano__note" data-note="G#"></div> <div class="piano__note" data-note="A"></div> <div class="piano__note" data-note="A#"></div> <div class="piano__note" data-note="B"></div> </div> </section> <script src="/js.b161388c.js"></script> </body></html>
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>MidiDorians</title>
+  <meta name="description" content="MidiDorians">
+  <meta name="author" content="adgad">
+
+  <link rel="stylesheet" href="/styles.b61e60ae.css?v=1.0">
+
+<script src="/styles.b61e60ae.js"></script></head>
+
+<body>
+
+	<section class="intro">
+		<div class="contents">
+		<h1 class="title">MidiDorians</h1>
+		<p class="info">Play the chords on your keyboard before they fall to the ground</p>
+		<p class="error"></p>
+
+		<form>
+			<label for="chord-roots">Chord Roots</label>
+			<select name="chord-roots" id="chord-roots" multiple="" size="2">
+				<option value="C">C</option>
+				<option value="C#">C#</option>
+				<option value="D">D</option>
+				<option value="D#">D#</option>
+				<option value="E">E</option>
+				<option value="F">F</option>
+				<option value="F#">F#</option>
+				<option value="G">G</option>
+				<option value="G#">G#</option>
+				<option value="A">A</option>
+				<option value="A#">A#</option>
+				<option value="B">B</option>
+			</select>
+			<label for="chord-complexity">Chord Length</label>
+			<select name="chord-length" id="chord-length">
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+			</select>
+			<label for="chord-complexity">Chord Complexity</label>
+			<select name="chord-complexity" id="chord-complexity">
+				<option value="simple">Simple</option>
+				<option value="intermediate">Intermediate</option>
+				<option value="hard">Hard</option>
+			</select>
+			<label for="chord-pace">Speed</label>
+			<select name="chord-pace" id="chord-pace">
+				<option value="13700">Slow</option>
+				<option value="9000">Medium</option>
+				<option value="5000">Fast</option>
+			</select>
+		</form>
+		<button class="start-game">Start</button>
+		</div>
+	</section>
+
+	<section class="game">
+		<div class="targets"></div>
+		<div class="score"></div>
+		<div class="currentChord"></div>
+
+		<div class="piano">
+			<div class="piano__note" data-note="C"></div>
+			<div class="piano__note" data-note="C#"></div>
+			<div class="piano__note" data-note="D"></div>
+			<div class="piano__note" data-note="D#"></div>
+			<div class="piano__note" data-note="E"></div>
+			<div class="piano__note" data-note="F"></div>
+			<div class="piano__note" data-note="F#"></div>
+			<div class="piano__note" data-note="G"></div>
+			<div class="piano__note" data-note="G#"></div>
+			<div class="piano__note" data-note="A"></div>
+			<div class="piano__note" data-note="A#"></div>
+			<div class="piano__note" data-note="B"></div>
+		</div>
+
+	</section>
+
+  <script src="/js.00a46daa.js"></script>
+
+</body>
+</html>
