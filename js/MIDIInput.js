@@ -58,7 +58,8 @@ export default class MIDIInput {
 		var note = message.data[1];
 		var velocity = message.data.length > 2 ? message.data[2] : 0; // a velocity value might not be included with a noteOff command
 
-		switch (command) {
+		// Mask off the lower nibble (MIDI channel, which we don't care about)
+		switch (command & 0xf0) {
 			case 144: // noteOn
 				if (velocity > 0) {
 					this.notes.add(note);
