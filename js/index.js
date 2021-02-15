@@ -9,7 +9,8 @@ class Game {
 			currentChord: document.querySelector('.currentChord'),
 			targets: document.querySelector('.targets'),
 			startButton: document.querySelector('.start-game'),
-			score: document.querySelector('.score'),
+			level: document.querySelector('.level .value'),
+			score: document.querySelector('.score .value'),
 			error: document.querySelector('.error'),
 		};
 
